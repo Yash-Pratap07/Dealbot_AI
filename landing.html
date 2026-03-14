@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DealBot AI | Negotiate better deals in real time</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#2563EB',
+                            bluelight: '#3B82F6',
+                            bluedark: '#1D4ED8',
+                        },
+                        ui: {
+                            bg: '#FDFCFB',
+                            card: '#FFFFFF',
+                            text: '#111827',
+                            muted: '#4B5563',
+                            border: '#E5E7EB',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'softer': '0 2px 10px -1px rgba(0, 0, 0, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FDFCFB;
+            color: #111827;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="font-sans selection:bg-brand-blue selection:text-white pb-24">
+
+    <!-- Navbar -->
+    <nav class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+        <div class="font-bold text-xl tracking-tight">DealBot<span class="text-brand-blue">AI</span></div>
+        <div class="space-x-4">
+            <a href="#" class="text-ui-muted hover:text-ui-text text-sm font-medium transition-colors">Sign In</a>
+            <a href="#" class="bg-brand-blue hover:bg-brand-bluedark text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Start Live Demo</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="max-w-7xl mx-auto px-6 pt-16 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div class="space-y-8">
+            <h1 class="text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+                Negotiate better deals <br/>
+                <span class="text-brand-blue">in real time.</span>
+            </h1>
+            <p class="text-lg text-ui-muted max-w-lg leading-relaxed">
+                DealBot AI discovers products, scores seller trust, runs live negotiation rounds, and finalizes contract-ready outcomes.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="#" class="bg-brand-blue hover:bg-brand-bluedark text-white px-6 py-3 rounded-lg text-base font-medium text-center transition-colors shadow-sm">Start Live Demo</a>
+                <a href="#" class="bg-transparent border border-ui-border hover:bg-gray-50 text-ui-text px-6 py-3 rounded-lg text-base font-medium text-center transition-colors">Open Dashboard</a>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-6 pt-8 border-t border-ui-border/60">
+                <div>
+                    <div class="text-2xl font-bold text-ui-text mb-1">12%</div>
+                    <div class="text-xs text-ui-muted font-medium uppercase tracking-wide">Avg Negotiated Savings</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-ui-text mb-1">2.3x</div>
+                    <div class="text-xs text-ui-muted font-medium uppercase tracking-wide">Faster Closure Cycle</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-ui-text mb-1">98%</div>
+                    <div class="text-xs text-ui-muted font-medium uppercase tracking-wide">Session Completion</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Right: Live Deal Room Card -->
+        <div class="relative">
+            <div class="bg-ui-card rounded-2xl shadow-soft border border-ui-border p-6 max-w-md mx-auto relative z-10">
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-ui-border">
+                    <h3 class="font-semibold text-sm">Live Deal Room</h3>
+                    <span class="flex items-center gap-2 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+                    </span>
+                </div>
+                
+                <div class="space-y-5">
+                    <!-- Message 1 -->
+                    <div class="flex gap-4">
+                        <div class="w-12 text-[10px] text-ui-muted pt-1 text-right shrink-0">10:42 AM</div>
+                        <div class="bg-gray-50 border border-gray-100 p-3 rounded-xl rounded-tl-none text-sm text-ui-text w-full">
+                            Buyer initial request: 50 units of Enterprise Laptops at $1,200/unit. Standard SLA.
+                        </div>
+                    </div>
+                    <!-- Message 2 -->
+                    <div class="flex gap-4">
+                        <div class="w-12 text-[10px] text-ui-muted pt-1 text-right shrink-0">10:44 AM</div>
+                        <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl rounded-tr-none text-sm text-brand-blue w-full relative">
+                            Seller counter: $1,180/unit if bumped to 60 units.
+                        </div>
+                    </div>
+                    <!-- Message 3 (AI Tooltip) -->
+                    <div class="flex gap-4 relative">
+                        <div class="w-12 text-[10px] text-ui-muted pt-1 text-right shrink-0">10:45 AM</div>
+                        <div class="bg-ui-card border-2 border-brand-blue p-3 rounded-xl text-sm text-ui-text w-full shadow-sm relative">
+                            <div class="absolute -top-3 left-4 bg-brand-blue text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                AI Reasoning
+                            </div>
+                            Accepting 60 units exceeds budget band by 4% but yields 15% better per-unit margin. Recommendation: Counter $1,150/unit for 60 units to lock deal.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Decorative background blob -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-brand-blue/10 rounded-full blur-3xl -z-10 disabled"></div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <h2 class="text-3xl font-bold tracking-tight mb-12">Built for real negotiation workflows</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-ui-card p-8 rounded-2xl shadow-softer border border-ui-border hover:shadow-soft transition-shadow">
+                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mb-6 text-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <h3 class="text-lg font-semibold mb-3">Market Discovery Engine</h3>
+                <p class="text-ui-muted text-sm leading-relaxed">Aggregate listings and normalize landed cost, shipping SLA, and seller reliability in one view.</p>
+            </div>
+            
+            <div class="bg-ui-card p-8 rounded-2xl shadow-softer border border-ui-border hover:shadow-soft transition-shadow">
+                <div class="w-10 h-10 bg-blue-50 text-brand-blue rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <h3 class="text-lg font-semibold mb-3">Negotiation Co‑Pilot</h3>
+                <p class="text-ui-muted text-sm leading-relaxed">Recommend counter windows using margin target, seller behavior, and response latency signals.</p>
+            </div>
+            
+            <div class="bg-ui-card p-8 rounded-2xl shadow-softer border border-ui-border hover:shadow-soft transition-shadow">
+                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mb-6 text-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-lg font-semibold mb-3">Verified Closure</h3>
+                <p class="text-ui-muted text-sm leading-relaxed">Convert accepted terms into contracts and settlement-ready records with clear audit history.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="max-w-7xl mx-auto px-6 py-20 bg-ui-card rounded-3xl border border-ui-border shadow-softer">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            
+            <!-- Left: Workflow -->
+            <div>
+                <h2 class="text-3xl font-bold tracking-tight mb-10">How it works</h2>
+                <div class="space-y-8 relative before:absolute before:inset-0 before:ml-[1.125rem] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
+                    
+                    <div class="relative flex items-start gap-6">
+                        <div class="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center font-semibold text-brand-blue relative z-10 shrink-0">1</div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2">Capture Intent</h4>
+                            <p class="text-ui-muted text-sm leading-relaxed">Capture product target, budget band, delivery SLA, and fallback constraints.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="relative flex items-start gap-6">
+                        <div class="w-10 h-10 rounded-full bg-brand-blue text-white shadow-sm flex items-center justify-center font-semibold relative z-10 shrink-0">2</div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2">Run Live Rounds</h4>
+                            <p class="text-ui-muted text-sm leading-relaxed">Execute structured rounds with explainable counter strategy and confidence scores.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="relative flex items-start gap-6">
+                        <div class="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center font-semibold text-brand-blue relative z-10 shrink-0">3</div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2">Finalize Terms</h4>
+                            <p class="text-ui-muted text-sm leading-relaxed">Finalize terms, lock contract fields, and hand off to settlement workflow.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right: Product Modules -->
+            <div class="bg-gray-50 p-8 rounded-2xl border border-gray-100">
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-ui-muted mb-6">Live product modules</h3>
+                <div class="space-y-4">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-ui-border flex gap-4 items-start">
+                        <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-600 shrink-0 mt-0.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm mb-1">Search and Ranking</h4>
+                            <p class="text-ui-muted text-xs leading-relaxed">Compare offers across sellers with normalized pricing and rank context.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-ui-border flex gap-4 items-start">
+                        <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-600 shrink-0 mt-0.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4V3a1 1 0 00-1-1H4a1 1 0 00-1 1v9a9 9 0 009 9c5 0 9-4 9-9V3h-2v9a7 7 0 01-7 7 7 7 0 01-7-7z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm mb-1">Trust Analysis</h4>
+                            <p class="text-ui-muted text-xs leading-relaxed">Score seller reliability using reviews, response behavior, and verification signals.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-brand-blue/30 ring-1 ring-brand-blue/10 flex gap-4 items-start relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-brand-blue"></div>
+                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-brand-blue shrink-0 mt-0.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm mb-1 text-brand-dark">Negotiation Room</h4>
+                            <p class="text-ui-muted text-xs leading-relaxed">Run live offer rounds with guided counters and decision visibility.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="max-w-7xl mx-auto px-6 py-24">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold tracking-tight mb-4">Product architecture</h2>
+            <p class="text-ui-muted">One pipeline from buyer intent to settlement, with visible checkpoints at each stage.</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+            <div class="bg-ui-card w-full md:w-56 p-6 rounded-xl border border-ui-border shadow-sm text-center">
+                <div class="text-sm font-semibold mb-1">Input</div>
+                <div class="text-xs text-ui-muted">Intent + constraints</div>
+            </div>
+            
+            <svg class="w-6 h-6 text-gray-300 hidden md:block rotate-90 md:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            
+            <div class="bg-ui-card w-full md:w-56 p-6 rounded-xl border border-ui-border shadow-sm text-center">
+                <div class="text-sm font-semibold mb-1">Engine</div>
+                <div class="text-xs text-ui-muted">Discovery + trust + ranking</div>
+            </div>
+
+            <svg class="w-6 h-6 text-gray-300 hidden md:block rotate-90 md:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+
+            <div class="bg-blue-50 w-full md:w-56 p-6 rounded-xl border border-blue-200 shadow-sm text-center">
+                <div class="text-sm font-semibold text-brand-blue mb-1">Negotiation</div>
+                <div class="text-xs text-brand-blue/80">Live buyer/seller rounds</div>
+            </div>
+
+            <svg class="w-6 h-6 text-gray-300 hidden md:block rotate-90 md:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+
+            <div class="bg-ui-card w-full md:w-56 p-6 rounded-xl border border-ui-border shadow-sm text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-bl-lg"></div>
+                <div class="text-sm font-semibold mb-1">Closure</div>
+                <div class="text-xs text-ui-muted">Contract + settlement</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="max-w-7xl mx-auto px-6 py-20 border-t border-ui-border/60">
+        <h2 class="text-3xl font-bold tracking-tight mb-12">Use cases</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-3 border-b border-ui-border pb-3">Procurement Teams</h3>
+                <p class="text-ui-muted text-sm leading-relaxed">Shorten hardware and software buying cycles while preserving approval controls.</p>
+            </div>
+            
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-3 border-b border-ui-border pb-3">Marketplace Operations</h3>
+                <p class="text-ui-muted text-sm leading-relaxed">Automate first-pass negotiation and route exceptions for human decision.</p>
+            </div>
+            
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-3 border-b border-ui-border pb-3">High-Value Buyers</h3>
+                <p class="text-ui-muted text-sm leading-relaxed">Compare trusted sellers and negotiate expensive purchases with clear risk signals.</p>
+            </div>
+        </div>
+
+        <!-- CTA Band -->
+        <div class="bg-gray-50 rounded-3xl p-12 text-center border border-gray-100 shadow-sm max-w-4xl mx-auto">
+            <h2 class="text-2xl font-bold mb-8">Ready to launch &ndash; Run your first live deal in 2 minutes.</h2>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#" class="bg-brand-blue hover:bg-brand-bluedark text-white px-8 py-3 rounded-lg text-base font-medium transition-colors shadow-sm">Create Account</a>
+                <a href="#" class="bg-white border border-ui-border hover:bg-gray-50 text-ui-text px-8 py-3 rounded-lg text-base font-medium transition-colors shadow-sm">Sign In</a>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

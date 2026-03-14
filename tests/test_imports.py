@@ -1,6 +1,7 @@
-﻿import sys, os
-os.chdir(r"C:\Users\lenovo\OneDrive\Documents\vs.code files\dealbot-ai")
-sys.path.insert(0, r"C:\Users\lenovo\OneDrive\Documents\vs.code files\dealbot-ai")
+import sys, os
+backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend'))
+os.chdir(backend_dir)
+sys.path.insert(0, backend_dir)
 print("1 - starting")
 from fastapi import FastAPI
 print("2 - fastapi ok")

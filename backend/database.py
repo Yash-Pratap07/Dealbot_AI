@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Boolean, Text, text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from datetime import datetime
+from sqlalchemy.orm import declarative_base, sessionmaker
+from datetime import datetime, timezone
 
 DATABASE_URL = "sqlite:///./dealbot.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -25,7 +24,7 @@ class User(Base):
     display_name = Column(String, nullable=True)
     avatar_url = Column(String, nullable=True)
     auth_provider = Column(String, default="local")          # local | google | facebook | phone
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 class Deal(Base):
@@ -47,7 +46,7 @@ class Deal(Base):
     rounds_taken = Column(Integer, nullable=True)
     evaluation = Column(Text, nullable=True)    # JSON evaluation dict
     votes = Column(Text, nullable=True)         # JSON votes dict
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 def get_db():

@@ -348,7 +348,7 @@ class ProductDiscoveryEngine:
                     location=seller["location"],
                     stock=random.randint(1, 50),
                     rating=seller["rating"] + random.uniform(-0.2, 0.2),
-                    review_count=seller["reviews"] + random.randint(-50, 100),
+                    review_count=max(1, seller["reviews"] + random.randint(-50, 100)),
                     reviews=random.sample(_REVIEWS, min(5, len(_REVIEWS))),
                     response_time=seller["response"],
                     verified=seller["verified"],
@@ -722,6 +722,45 @@ _STOP_WORDS = {"i", "want", "a", "an", "the", "need", "looking", "for", "under",
                "below", "above", "is", "my", "budget", "best", "good", "please",
                "with", "and", "or", "some", "any", "get", "buy", "purchase", "find"}
 
+# ─── Weight Presets (cherry-picked from hackathon intent parser) ──────────────
+
+_WEIGHT_PRESETS = {
+    "cheap":    (0.9, 0.1),
+    "cheapest": (0.9, 0.1),
+    "fast":     (0.3, 0.7),
+    "urgent":   (0.2, 0.8),
+    "asap":     (0.2, 0.8),
+    "quality":  (0.6, 0.4),
+    "premium":  (0.6, 0.4),
+    "balanced": (0.5, 0.5),
+}
+
+
+def _extract_timeline(text: str) -> Optional[int]:
+    """Extract delivery timeline in days from natural language."""
+    days_match = re.search(r'(\d+)\s*(?:day|days)', text)
+    if days_match:
+        return int(days_match.group(1))
+    weeks_match = re.search(r'(\d+)\s*(?:week|weeks)', text)
+    if weeks_match:
+        return int(weeks_match.group(1)) * 7
+    month_match = re.search(r'(\d+)\s*(?:month|months)', text)
+    if month_match:
+        return int(month_match.group(1)) * 30
+    if any(word in text for word in ["asap", "urgent", "rush", "immediately"]):
+        return 3
+    if "next week" in text:
+        return 7
+    return None
+
+
+def _extract_weights(text: str) -> Optional[tuple]:
+    """Detect weight presets from keyword cues."""
+    for keyword, weights in _WEIGHT_PRESETS.items():
+        if keyword in text:
+            return weights
+    return None
+
 
 class ShoppingAssistant:
     """
@@ -757,6 +796,12 @@ class ShoppingAssistant:
                     currency = "GBP"
                 break
 
+        # Extract timeline (from hackathon intent parser)
+        timeline_days = _extract_timeline(t)
+
+        # Detect weight preferences (from hackathon intent parser)
+        weights = _extract_weights(t)
+
         # Build clean search terms
         clean = [w for w in re.sub(r'[₹$€£,]', ' ', t).split()
                  if w not in _STOP_WORDS and not w.replace('.', '').isdigit()]
@@ -769,6 +814,8 @@ class ShoppingAssistant:
             "currency":        currency,
             "search_terms":    search_terms or detected,
             "has_preferences": detected in _PREFERENCE_QUESTIONS,
+            "timeline_days":   timeline_days,
+            "weight_preset":   weights,
         }
 
     def get_preference_questions(self, category: str) -> List[Dict]:
@@ -904,7 +951,11 @@ class ProductLinkAnalyzer:
                 platform_price = round(base_price * markup * random.uniform(0.97, 1.04), 2)
 
         # ── Build category / emoji from scraped name ───────────────────────
-        from web_search import _categorize
+        try:
+            from web_search import _categorize
+        except ImportError:
+            def _categorize(name: str):
+                return ("General", "📦")
         category, emoji = _categorize(product_name)
 
         # ── Build specs ─────────────────────────────────────────────────────

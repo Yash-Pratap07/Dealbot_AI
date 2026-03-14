@@ -1,4 +1,4 @@
-﻿"""
+"""
 Negotiation Engine - DealBot AI  [Web4 Edition]
 Full flow per spec:
   User selects product -> Buyer AI generates offer -> Seller AI counters
@@ -7,12 +7,16 @@ Full flow per spec:
   -> Autonomous WUSD settlement -> Blockchain record
 """
 import asyncio
+import time as _time
 from typing import AsyncGenerator
 
 from agents import BuyerAgent, SellerAgent
-from evaluation import evaluate_deal
+from evaluation import evaluate_deal, BidPayload
 from voting import majority_vote_decision
-from safety import fraud_check
+from safety import (
+    fraud_check, run_pre_negotiation_checks, detect_adversarial_pattern,
+    validate_negotiation_duration, GuardrailViolation,
+)
 from memory import get_memory_context, save_to_memory
 
 # Web4 imports
@@ -56,7 +60,28 @@ async def negotiate_stream(
     strategy_switched = False
     cfg               = NEGOTIATION_CONFIG
 
+    # ── Pre-negotiation guardrails ──────────────────────────────────────
+    try:
+        pre_checks = run_pre_negotiation_checks(max_price, market_price)
+        if pre_checks["warnings"]:
+            fraud_flags.extend(pre_checks["warnings"])
+    except GuardrailViolation as gv:
+        yield {"type": "done", "agreement": False, "final_price": None,
+               "evaluation": {"verdict": "BLOCKED", "message": str(gv)},
+               "votes": [], "fraud_flags": [str(gv)], "rounds_taken": 0,
+               "strategy_switched": False, "memory_hint": memory,
+               "history": [], "settlement": None, "agent_identities": []}
+        return
+
+    negotiation_start = _time.time()
+
     for round_num in range(1, cfg["maxRounds"] + 1):
+
+        # ── Time-based abort ───────────────────────────────────────────
+        try:
+            validate_negotiation_duration(negotiation_start)
+        except GuardrailViolation:
+            break
 
         if round_num == cfg["strategySwitch_round"] and not strategy_switched:
             buyer.model  = "GPT"
@@ -69,6 +94,10 @@ async def negotiate_stream(
 
         buyer_price,  buyer_msg  = buyer.make_offer(round_num)
         seller_price, seller_msg = seller.make_counter(round_num)
+
+        # ── Structured BidPayload for audit trail ──────────────────────
+        buyer_bid  = BidPayload(price=buyer_price,  days=0, round_num=round_num, agent_role="buyer")
+        seller_bid = BidPayload(price=seller_price, days=0, round_num=round_num, agent_role="seller")
 
         # ── Web4: sign each offer with the agent's wallet ──────────────────
         buyer_sig  = AgentRegistry.sign_offer("buyer_agent",  buyer_price,  round_num) if _WEB4_AVAILABLE else None
@@ -83,6 +112,11 @@ async def negotiate_stream(
         if flag:
             fraud_flags.append(flag)
 
+        # ── Adversarial pattern detection ──────────────────────────────
+        adv_warning = detect_adversarial_pattern(seller_price, market_price, history)
+        if adv_warning:
+            fraud_flags.append(adv_warning)
+
         if prev_gap is not None:
             no_progress = (no_progress + 1) if abs(prev_gap - gap) < 10 else 0
         prev_gap = gap
@@ -94,6 +128,9 @@ async def negotiate_stream(
             "gap": gap, "strategy": buyer.config.strategyType,
             "buyer_model": buyer.model, "seller_model": seller.model,
             "fraud_flag": flag,
+            # Structured bid hashes for audit trail
+            "buyer_proposal_id":  buyer_bid.proposal_id,
+            "seller_proposal_id": seller_bid.proposal_id,
             # Web4: signed offers prove agents made these decisions
             "buyer_agent_address":  buyer_sig["address"]  if buyer_sig  else None,
             "seller_agent_address": seller_sig["address"] if seller_sig else None,
@@ -168,7 +205,12 @@ async def run_negotiation(
     strategy="balanced", buyer_model="gemini", seller_model="gemini",
     market_price=None, product="item",
 ):
-    result = {}
+    result = {
+        "type": "done", "agreement": False, "final_price": None,
+        "evaluation": {}, "votes": [], "fraud_flags": [],
+        "rounds_taken": 0, "strategy_switched": False,
+        "memory_hint": {}, "history": [], "settlement": None,
+    }
     async for chunk in negotiate_stream(max_price, min_price, strategy, buyer_model, seller_model, market_price, product):
         if chunk["type"] == "done":
             result = chunk

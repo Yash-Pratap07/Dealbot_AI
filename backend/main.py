@@ -1,6 +1,10 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+import pathlib
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -10,6 +14,9 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
 import json, traceback, asyncio, re
+
+_log = logging.getLogger(__name__)
+_STATIC_DIR = pathlib.Path(__file__).resolve().parent.parent / "static"
 
 from orchestrator import run_negotiation, negotiate_stream
 from database import get_db, User, Deal, init_db
@@ -24,7 +31,12 @@ from blockchain.contract import generate_contract
 from blockchain.agent_identity import get_all_agent_identities, AgentRegistry
 from blockchain.settlement import settle_from_result, _is_chain_available
 
-app = FastAPI(title="DealBot AI", version="2.0.0")
+@asynccontextmanager
+async def lifespan(app):
+    init_db()
+    yield
+
+app = FastAPI(title="DealBot AI", version="2.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,12 +46,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-
-@app.on_event("startup")
-def on_startup():
-    init_db()
+app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 
 
 # ─── Schemas ──────────────────────────────────────────────────────────────────
@@ -306,7 +313,8 @@ async def negotiate(
         db.commit()
         return result
     except Exception as e:
-        return {"error": str(e), "traceback": traceback.format_exc()}
+        _log.exception("Negotiation failed")
+        raise HTTPException(status_code=500, detail="Negotiation failed. Please try again.")
 
 
 # ─── WebSocket (real-time negotiation) ───────────────────────────────────────
@@ -364,30 +372,33 @@ async def ws_negotiate(websocket: WebSocket):
                         payload = _jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
                         username = payload.get("sub")
                         if username:
-                            db = next(get_db())
-                            user = db.query(User).filter(User.username == username).first()
-                            if user:
-                                deal = Deal(
-                                    user_id=user.id,
-                                    max_price=max_price,
-                                    min_price=min_price,
-                                    final_price=chunk.get("final_price"),
-                                    agreement=chunk.get("agreement", False),
-                                    contract_hash=contract_hash,
-                                    history=json.dumps(chunk.get("history", [])),
-                                    product=product,
-                                    market_price=market_price,
-                                    fraud_flags=json.dumps(chunk.get("fraud_flags", [])),
-                                    strategy=strategy,
-                                    rounds_taken=chunk.get("rounds_taken"),
-                                    evaluation=json.dumps(chunk.get("evaluation", {})),
-                                    votes=json.dumps(chunk.get("votes", {})),
-                                )
-                                db.add(deal)
-                                db.commit()
+                            db_gen = get_db()
+                            db = next(db_gen)
+                            try:
+                                user = db.query(User).filter(User.username == username).first()
+                                if user:
+                                    deal = Deal(
+                                        user_id=user.id,
+                                        max_price=max_price,
+                                        min_price=min_price,
+                                        final_price=chunk.get("final_price"),
+                                        agreement=chunk.get("agreement", False),
+                                        contract_hash=contract_hash,
+                                        history=json.dumps(chunk.get("history", [])),
+                                        product=product,
+                                        market_price=market_price,
+                                        fraud_flags=json.dumps(chunk.get("fraud_flags", [])),
+                                        strategy=strategy,
+                                        rounds_taken=chunk.get("rounds_taken"),
+                                        evaluation=json.dumps(chunk.get("evaluation", {})),
+                                        votes=json.dumps(chunk.get("votes", {})),
+                                    )
+                                    db.add(deal)
+                                    db.commit()
+                            finally:
                                 db.close()
                     except Exception:
-                        pass  # best-effort save
+                        _log.warning("Failed to save deal from WebSocket", exc_info=True)
 
                 await websocket.send_json(chunk)
                 break
@@ -452,7 +463,7 @@ def get_wallet_balance(address: str):
             bal = get_balance(address)
             return {"address": address, "balance_wusd": bal, "source": "live"}
         except Exception as e:
-            pass
+            _log.warning("Live balance query failed for %s: %s", address, e)
     # Simulated balance for dev
     import hashlib
     sim_bal = (int(hashlib.sha256(address.encode()).hexdigest(), 16) % 50000) / 100
@@ -466,7 +477,7 @@ def get_wallet_deals(current_user: User = Depends(get_current_user), db: Session
     result = []
     for d in deals:
         history = json.loads(d.history or "[]")
-        contract_hash = d.contract_hash or hash_transcript(history) if history else None
+        contract_hash = d.contract_hash or (hash_transcript(history) if history else None)
         settlement = None
         if d.agreement and contract_hash:
             from blockchain.settlement import _simulated_settle
@@ -741,4 +752,4 @@ def payments_for_deal(
 
 @app.get("/")
 def home():
-    return FileResponse("static/index.html")
+    return FileResponse(str(_STATIC_DIR / "index.html"))

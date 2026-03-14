@@ -1,0 +1,37 @@
+
+> frontend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.108.176.95:3000
+- Environments: .env.local
+
+✓ Starting...
+✓ Ready in 3.1s
+ GET /login?error=google_auth_failed 200 in 2.1s (compile: 897ms, render: 1252ms)
+ GET /login 200 in 592ms (compile: 61ms, render: 532ms)
+ GET /login 200 in 593ms (compile: 143ms, render: 450ms)
+ GET /login 200 in 335ms (compile: 14ms, render: 321ms)
+ GET /login 200 in 440ms (compile: 23ms, render: 417ms)
+ GET /login 200 in 301ms (compile: 11ms, render: 290ms)
+ GET /login 200 in 192ms (compile: 22ms, render: 170ms)
+ GET / 200 in 200ms (compile: 77ms, render: 123ms)
+ GET /login 200 in 122ms (compile: 18ms, render: 104ms)
+ POST /api/auth/google/callback 307 in 1885ms (compile: 196ms, render: 1689ms)
+ POST /auth/complete?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ5YXNoX2phZG9uIiwiZXhwIjoxNzcyODExMDE2fQ.MDGmwoIjv9_CKI_nM_svQRIxweto0UtIlyrH99QXxr4 200 in 1483ms (compile: 1369ms, render: 113ms)
+ GET /dashboard/buyer 200 in 278ms (compile: 218ms, render: 60ms)
+ GET /login 200 in 316ms (compile: 14ms, render: 302ms)
+ POST /api/auth/google/callback 307 in 1328ms (compile: 5ms, render: 1323ms)
+ POST /auth/complete?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ5YXNoX2phZG9uIiwiZXhwIjoxNzcyODExMDQ2fQ.XS-l7cuyIZH061qvQOeIIGBPNnVAavf7MyDd4jHqLg0 200 in 92ms (compile: 8ms, render: 84ms)
+ GET /dashboard/buyer 200 in 53ms (compile: 9ms, render: 44ms)
+ GET /dashboard/seller 200 in 160ms (compile: 119ms, render: 42ms)
+ GET /dashboard/deals 200 in 134ms (compile: 86ms, render: 48ms)
+ GET /dashboard/buyer 200 in 68ms (compile: 19ms, render: 49ms)
+ GET /login 200 in 88ms (compile: 7ms, render: 81ms)
+ GET /login 200 in 47ms (compile: 7ms, render: 40ms)
+ POST /api/auth/google/callback 307 in 1105ms (compile: 5ms, render: 1100ms)
+ POST /auth/complete?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ5YXNoX2phZG9uIiwiZXhwIjoxNzcyODExNDA5fQ.7OFstLpnHG_Q55OESMSx1DCXUC3U6xLaE8T08XjNYpk 200 in 78ms (compile: 6ms, render: 72ms)
+ GET /dashboard/buyer 200 in 55ms (compile: 10ms, render: 45ms)
+Terminate batch job (Y/N)? [?25h
+Terminate batch job (Y/N)? ^C

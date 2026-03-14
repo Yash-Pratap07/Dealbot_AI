@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run DealBot AI",
+			"type": "shell",
+			"command": "\"C:/Users/lenovo/OneDrive/Documents/vs.code files/dealbot-ai/venv/Scripts/python.exe\" -m uvicorn main:app --reload",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,0 +1,52 @@
+{
+  "laptop": {
+    "total_price": 49184.25999999997,
+    "count": 33,
+    "strategies": {
+      "balanced": 32,
+      "aggressive": 1
+    }
+  },
+  "testitem": {
+    "total_price": 1496.1,
+    "count": 1,
+    "strategies": {
+      "aggressive": 1
+    }
+  },
+  "samsung oled 4k s90f smart tv": {
+    "total_price": 845.2,
+    "count": 1,
+    "strategies": {
+      "balanced": 1
+    }
+  },
+  "alienware 16 aurora gaming laptop intel 7": {
+    "total_price": 1400.99,
+    "count": 1,
+    "strategies": {
+      "balanced": 1
+    }
+  },
+  "apple iphone 17 pro": {
+    "total_price": 85.5,
+    "count": 2,
+    "strategies": {
+      "balanced": 2
+    }
+  },
+  "yonex nanoflare 1000 z badminton racket": {
+    "total_price": 221.16,
+    "count": 1,
+    "strategies": {
+      "balanced": 1
+    }
+  },
+  "apple iphone 17 pro max a3257 256gb unlocked very good condition": {
+    "total_price": 189046.71,
+    "count": 2,
+    "strategies": {
+      "balanced": 2
+    }
+  }
+}
